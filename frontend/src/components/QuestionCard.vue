@@ -44,7 +44,7 @@ const letters = ['A', 'B', 'C', 'D']
 </script>
 
 <style scoped>
-.question-card { width: 100%; }
+.question-card { width: 100%; min-width: 0; }
 .question-card.large .question-text { font-size: 2rem; }
 .question-card.large .option-display { font-size: 1.2rem; padding: 16px 20px; }
 
@@ -53,7 +53,17 @@ const letters = ['A', 'B', 'C', 'D']
 .media-block iframe { width: 100%; height: 360px; border: none; border-radius: var(--radius); }
 .media-block img { max-width: 100%; border-radius: var(--radius); max-height: 320px; object-fit: cover; }
 
-.question-text { font-size: 1.3rem; font-weight: 700; line-height: 1.4; margin-bottom: 20px; }
+.question-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: manual;
+}
 
 .options-display { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .option-display {
