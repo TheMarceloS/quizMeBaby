@@ -81,6 +81,8 @@ export default {
     startQuestion: '▶ Iniciar Pergunta',
     previewAudio: 'Ouvir 10s',
     pausePreviewAudio: 'Pausar',
+    showAnswer: 'Mostrar resposta',
+    hideAnswer: 'Ocultar resposta',
   },
 
   results: {
