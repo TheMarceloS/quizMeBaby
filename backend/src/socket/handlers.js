@@ -1,4 +1,5 @@
 import { createSession, getSession, findSessionBySocket } from './gameSession.js'
+import { pickQuestionsForRound } from './questionPicker.js'
 import supabase from '../db/client.js'
 
 export function registerHandlers(io, socket) {
@@ -60,9 +61,8 @@ export function registerHandlers(io, socket) {
 
     if (!allQuestions?.length) return socket.emit('start_error', { message: 'No questions available.' })
 
-    // Shuffle and take numQuestions
-    const shuffled = allQuestions.sort(() => Math.random() - 0.5)
-    let questions = shuffled.slice(0, Math.min(numQuestions, shuffled.length))
+    // Prefer questions not yet used in this session across rounds
+    let questions = pickQuestionsForRound(allQuestions, numQuestions, session.usedQuestionIds)
 
     // Attach all available translations so each client can render in their own language
     const ids = questions.map(q => q.id)
