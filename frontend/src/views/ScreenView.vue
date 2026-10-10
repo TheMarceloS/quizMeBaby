@@ -243,7 +243,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.screen-view { min-height: 100vh; display: flex; flex-direction: column; padding: 32px 48px; background: var(--bg); }
+.screen-view { min-height: var(--app-height); display: flex; flex-direction: column; padding: 32px 48px; background: var(--bg); }
 .screen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
 .room-code { font-size: 1.5rem; font-weight: 900; letter-spacing: 4px; color: var(--primary); }
 

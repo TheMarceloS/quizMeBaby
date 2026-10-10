@@ -549,7 +549,7 @@ function readyForNextQuestion() {
 </script>
 
 <style scoped>
-.play-view { min-height: 100vh; }
+.play-view { min-height: var(--app-height); }
 
 /* ── Lobby ──────────────────────────────── */
 .lobby-card { text-align: center; max-width: 400px; width: 100%; }
@@ -582,7 +582,7 @@ function readyForNextQuestion() {
 /* ── Countdown ──────────────────────────── */
 .fullscreen-center {
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; min-height: 100dvh; gap: 16px;
+  justify-content: center; min-height: var(--app-height); gap: 16px;
 }
 .get-ready { font-size: 1.4rem; color: var(--text-muted); font-weight: 600; }
 .waiting-sub { font-size: 1rem; color: var(--text-muted); opacity: 0.85; margin: 0; }
@@ -591,7 +591,7 @@ function readyForNextQuestion() {
 
 /* ── Question screen ────────────────────── */
 .question-screen {
-  min-height: 100dvh;
+  min-height: var(--app-height);
   display: flex;
   flex-direction: column;
   padding-top: var(--safe-top);
@@ -766,7 +766,7 @@ function readyForNextQuestion() {
   align-items: center; justify-content: center;
   padding: 40px 24px;
   gap: 12px;
-  min-height: 70dvh;
+  min-height: calc(var(--app-height) * 0.7);
 }
 .feedback-screen.correct  { color: var(--success); }
 .feedback-screen.incorrect { color: var(--danger); }

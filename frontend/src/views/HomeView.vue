@@ -38,7 +38,7 @@ const currentLangFlag = computed(() =>
 
 <style scoped>
 .home-screen {
-  min-height: 100dvh;
+  min-height: var(--app-height);
   display: flex;
   align-items: center;
   justify-content: center;

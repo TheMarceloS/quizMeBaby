@@ -64,7 +64,7 @@ onUnmounted(() => clearInterval(pollTimer))
 
 <style scoped>
 .screen-auto {
-  min-height: 100vh;
+  min-height: var(--app-height);
   display: flex;
   flex-direction: column;
   align-items: center;
