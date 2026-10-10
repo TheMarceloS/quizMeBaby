@@ -44,7 +44,7 @@
           : $t('roundTypes.loneWolfNobody') }}
       </div>
       <div class="results-row">
-        <Scoreboard :players="game.scoreboard" :compact="false" />
+        <Scoreboard :players="game.scoreboard" :compact="false" :show-delta="true" />
         <div v-if="answerTimes.length" class="answer-times">
           <div class="at-header">⏱ {{ $t('results.answerTimes') }}</div>
           <div v-for="(r, i) in answerTimes" :key="r.id" class="at-row" :class="{ correct: r.isCorrect, skipped: r.skipped }">
