@@ -661,6 +661,7 @@ function readyForNextQuestion() {
   flex-direction: column;
   padding: 8px 20px 20px;
   overflow-y: auto;
+  min-width: 0;
 }
 
 .question-media {
@@ -690,6 +691,11 @@ function readyForNextQuestion() {
   line-height: 1.4;
   margin-bottom: 24px;
   flex-shrink: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: manual;
 }
 
 /* ── Options grid ───────────────────────── */
