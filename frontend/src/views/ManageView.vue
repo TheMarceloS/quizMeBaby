@@ -676,7 +676,7 @@ onMounted(loadData)
 </script>
 
 <style scoped>
-.manage-view { min-height: 100vh; padding: 40px 24px; }
+.manage-view { min-height: var(--app-height); padding: 40px 24px; }
 .manage-container { max-width: 860px; margin: 0 auto; }
 
 .back-link { color: var(--text-muted); font-size: 0.9rem; display: inline-block; margin-bottom: 8px; }

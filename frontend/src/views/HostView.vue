@@ -743,7 +743,7 @@ function resetGame() {
 </script>
 
 <style scoped>
-.host-view { min-height: 100vh; }
+.host-view { min-height: var(--app-height); }
 
 .setup-card { max-width: 400px; width: 100%; }
 .back-link { display: inline-block; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
@@ -1069,7 +1069,7 @@ function resetGame() {
   /* Question panel — push controls to bottom */
   .question-panel {
     display: flex; flex-direction: column;
-    min-height: calc(100dvh - 72px);
+    min-height: calc(var(--app-height) - 72px);
   }
   .answer-progress { margin-top: auto; padding-top: 16px; }
 

@@ -61,7 +61,7 @@ function pick(code) {
 
 .lang-screen {
   position: relative;
-  min-height: 100dvh;
+  min-height: var(--app-height);
   display: flex;
   align-items: center;
   justify-content: center;
