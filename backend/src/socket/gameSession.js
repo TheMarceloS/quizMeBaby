@@ -38,6 +38,8 @@ export class GameSession {
     this.nextQuestionTimeOverride = null
     this.moderationMode = 'host'
     this.readyForNextQuestion = new Set()
+    /** Question IDs already used in this session across rounds */
+    this.usedQuestionIds = new Set()
   }
 
   addPlayer(socketId, nickname, isHost = false) {
@@ -98,6 +100,9 @@ export class GameSession {
     this.status = 'active'
     this.currentQuestionIndex = -1
     this.readyForNextQuestion = new Set()
+    for (const q of questions) {
+      if (q?.id != null) this.usedQuestionIds.add(q.id)
+    }
   }
 
   getParticipatingPlayers() {
