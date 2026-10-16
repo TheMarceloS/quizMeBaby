@@ -162,7 +162,32 @@
         <div v-if="game.roundType === 'chaos' && previewData?.questionModifier" class="chaos-mod-banner">
           {{ $t('roundTypes.chaosMod', { mod: $t(`roundTypes.${previewData.questionModifier}`) }) }}
         </div>
-        <QuestionCard :question="previewQuestionCard" :show-answer="true" :correct-answer="previewQuestionCard?.correct_answer" />
+        <QuestionCard
+          :question="previewQuestionCard"
+          :show-answer="showHostAnswer"
+          :correct-answer="previewQuestionCard?.correct_answer"
+        />
+
+        <button
+          type="button"
+          class="answer-visibility-btn"
+          :class="{ revealed: showHostAnswer }"
+          :aria-pressed="showHostAnswer"
+          :title="showHostAnswer ? $t('game.hideAnswer') : $t('game.showAnswer')"
+          @click="showHostAnswer = !showHostAnswer"
+        >
+          <svg v-if="!showHostAnswer" class="eye-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <svg v-else class="eye-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+            <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+            <line x1="1" y1="1" x2="23" y2="23" />
+          </svg>
+          <span>{{ showHostAnswer ? $t('game.hideAnswer') : $t('game.showAnswer') }}</span>
+        </button>
 
         <!-- 10-second audio preview for music questions -->
         <div v-if="previewData?.question?.type === 'music' && previewData.question.media_url" class="preview-audio-player">
@@ -414,6 +439,7 @@ const previewAudio = ref(null)
 const previewAudioPlaying = ref(false)
 const previewAudioPct = ref(0)
 const previewAudioSec = ref(0)
+const showHostAnswer = ref(false)
 const PREVIEW_DURATION = 10
 const answeredCount = ref(0)
 const totalPlayers = ref(0)
@@ -566,6 +592,7 @@ const onPreparingReveal = ({ countdown: c }) => {
 }
 
 const onQuestionPreview = (data) => {
+  showHostAnswer.value = false
   previewData.value = data
   game.questionIndex = data.index
   game.totalQuestions = data.total
@@ -909,6 +936,36 @@ function resetGame() {
 }
 .preview-sub { font-size: 0.85rem; color: var(--text-muted); }
 .preview-actions { display: flex; justify-content: flex-end; padding-top: 4px; }
+
+.answer-visibility-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.answer-visibility-btn:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.3);
+}
+.answer-visibility-btn.revealed {
+  color: var(--success);
+  border-color: rgba(44,182,125,0.45);
+  background: rgba(44,182,125,0.12);
+}
+.answer-visibility-btn .eye-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
 
 .preview-audio-player {
   display: flex; align-items: center; gap: 10px;
