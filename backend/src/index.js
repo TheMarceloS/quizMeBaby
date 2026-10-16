@@ -7,15 +7,17 @@ import questionsRouter from './routes/questions.js'
 import mediaRouter from './routes/media.js'
 import { registerHandlers } from './socket/handlers.js'
 import { getActiveSessions } from './socket/gameSession.js'
+import { parseCorsOrigin } from './corsOrigin.js'
 
 const app = express()
 const httpServer = createServer(app)
+const corsOrigin = parseCorsOrigin()
 
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CORS_ORIGIN || true, methods: ['GET', 'POST'] },
+  cors: { origin: corsOrigin, methods: ['GET', 'POST'] },
 })
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || true }))
+app.use(cors({ origin: corsOrigin }))
 app.use(express.json())
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }))
@@ -30,4 +32,6 @@ io.on('connection', socket => {
 })
 
 const PORT = process.env.PORT || 3001
-httpServer.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`)
+})

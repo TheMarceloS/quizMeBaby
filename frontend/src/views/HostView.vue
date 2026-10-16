@@ -414,7 +414,8 @@ import { useI18n } from 'vue-i18n'
 import { setLocale } from '../i18n/index.js'
 import { useGameStore } from '../stores/game.js'
 import { usePlayerStore } from '../stores/player.js'
-import { useSocket } from '../composables/useSocket.js'
+import { useSocket, waitForSocket } from '../composables/useSocket.js'
+import { apiUrl, hasRemoteSocketUrl, needsRemoteBackend } from '../config/server.js'
 import QuestionCard from '../components/QuestionCard.vue'
 import Scoreboard from '../components/Scoreboard.vue'
 import ScoreTable from '../components/ScoreTable.vue'
@@ -663,7 +664,7 @@ onMounted(async () => {
   socket.on('language_changed', onLanguageChanged)
 
   try {
-    const res = await fetch('/api/questions/categories')
+    const res = await fetch(apiUrl('/api/questions/categories'))
     categories.value = await res.json()
   } catch { /* silently ignore — select will just show "All categories" */ }
 })
@@ -692,10 +693,23 @@ function changeLanguage(lang) {
   socket.emit('set_language', { code: game.code, language: lang })
 }
 
-function createSession() {
+function serverConnectError() {
+  if (needsRemoteBackend()) return t('errors.serverMissingEnv')
+  if (hasRemoteSocketUrl()) return t('errors.serverUnreachable')
+  return t('errors.serverLan')
+}
+
+async function createSession() {
   error.value = ''
   if (!hostName.value.trim()) { error.value = t('host.nameRequired'); return }
   loading.value = true
+  try {
+    await waitForSocket(5000)
+  } catch {
+    loading.value = false
+    error.value = serverConnectError()
+    return
+  }
   socket.emit('create_session', {
     nickname: hostName.value.trim(),
     teamName: hostPlaysAsTeam.value ? (teamName.value.trim() || hostName.value.trim()) : undefined,
@@ -703,7 +717,7 @@ function createSession() {
   const timeout = setTimeout(() => {
     if (loading.value) {
       loading.value = false
-      error.value = 'Could not connect to server. Make sure you are on the same Wi-Fi network.'
+      error.value = serverConnectError()
     }
   }, 8000)
   socket.once('session_created', () => clearTimeout(timeout))

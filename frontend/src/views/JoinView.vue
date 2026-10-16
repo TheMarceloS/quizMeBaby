@@ -42,7 +42,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { setLocale } from '../i18n/index.js'
-import { useSocket } from '../composables/useSocket.js'
+import { useSocket, waitForSocket } from '../composables/useSocket.js'
+import { hasRemoteSocketUrl, needsRemoteBackend } from '../config/server.js'
 import { useGameStore } from '../stores/game.js'
 import { usePlayerStore } from '../stores/player.js'
 
@@ -79,13 +80,34 @@ onUnmounted(() => {
   socket.off('join_error', onJoinError)
 })
 
-function join() {
+function serverConnectError() {
+  if (needsRemoteBackend()) return t('errors.serverMissingEnv')
+  if (hasRemoteSocketUrl()) return t('errors.serverUnreachable')
+  return t('errors.serverLan')
+}
+
+async function join() {
   error.value = ''
   if (!code.value.trim() || !nickname.value.trim()) {
     error.value = t('join.required')
     return
   }
   loading.value = true
+  try {
+    await waitForSocket(5000)
+  } catch {
+    loading.value = false
+    error.value = serverConnectError()
+    return
+  }
+  const timeout = setTimeout(() => {
+    if (loading.value) {
+      loading.value = false
+      error.value = serverConnectError()
+    }
+  }, 8000)
+  socket.once('joined_session', () => clearTimeout(timeout))
+  socket.once('join_error', () => clearTimeout(timeout))
   socket.emit('join_session', { code: code.value.toUpperCase(), nickname: nickname.value.trim() })
 }
 </script>

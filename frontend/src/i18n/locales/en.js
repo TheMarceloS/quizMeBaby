@@ -144,4 +144,14 @@ export default {
     en: '🇬🇧 English',
     'pt-PT': '🇵🇹 Português',
   },
+
+  errors: {
+    serverMissingEnv:
+      'This site has no game server configured. Set VITE_SOCKET_URL on Vercel to your hosted backend URL, then redeploy.',
+    serverUnreachable:
+      'Could not reach the game server. Check that the backend is running and VITE_SOCKET_URL is correct.',
+    serverLan:
+      'Could not connect to the game server. Start the backend on your network, or set VITE_SOCKET_URL for a hosted backend.',
+  },
 }
+

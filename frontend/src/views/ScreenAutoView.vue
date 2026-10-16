@@ -30,6 +30,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { apiUrl } from '../config/server.js'
 
 const router = useRouter()
 const sessions = ref([])
@@ -37,7 +38,7 @@ let pollTimer = null
 
 async function poll() {
   try {
-    const res = await fetch('/api/session/active')
+    const res = await fetch(apiUrl('/api/session/active'))
     const data = await res.json()
     sessions.value = data.sessions ?? []
 

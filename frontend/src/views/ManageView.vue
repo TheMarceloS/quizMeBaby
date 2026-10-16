@@ -334,6 +334,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import axios from 'axios'
+import { apiUrl } from '../config/server.js'
 
 const PAGE_SIZE = 25
 
@@ -434,8 +435,8 @@ async function fetchPage() {
   loading.value = true
   const qs = buildParams()
   const [qRes, countRes] = await Promise.all([
-    axios.get(`/api/questions?${qs}`),
-    axios.get(`/api/questions/count?${qs}`),
+    axios.get(apiUrl(`/api/questions?${qs}`)),
+    axios.get(apiUrl(`/api/questions/count?${qs}`)),
   ])
   questions.value = qRes.data
   total.value = countRes.data.count
@@ -445,7 +446,7 @@ async function fetchPage() {
 async function loadData() {
   const [, cRes] = await Promise.all([
     fetchPage(),
-    axios.get('/api/questions/categories'),
+    axios.get(apiUrl('/api/questions/categories')),
   ])
   categories.value = cRes.data
 }
@@ -482,7 +483,7 @@ async function searchDeezer() {
   trackError.value = ''
   trackResults.value = []
   try {
-    const res = await axios.get(`/api/media/deezer/search?q=${encodeURIComponent(trackQuery.value.trim())}`)
+    const res = await axios.get(apiUrl(`/api/media/deezer/search?q=${encodeURIComponent(trackQuery.value.trim())}`))
     trackResults.value = res.data
     if (!res.data.length) trackError.value = 'No results found.'
   } catch (err) {
@@ -502,7 +503,7 @@ async function selectTrack(track) {
   form.value.correct_answer = track.name
 
   try {
-    const res = await axios.get(`/api/media/deezer/radio?artistId=${track.artistId}`)
+    const res = await axios.get(apiUrl(`/api/media/deezer/radio?artistId=${track.artistId}`))
     const decoys = res.data
       .filter(t => t.name !== track.name)
       .slice(0, 3)
@@ -533,7 +534,7 @@ async function searchImages() {
   imageError.value = ''
   imageResults.value = []
   try {
-    const res = await axios.get(`/api/media/images/search?q=${encodeURIComponent(imageQuery.value.trim())}`)
+    const res = await axios.get(apiUrl(`/api/media/images/search?q=${encodeURIComponent(imageQuery.value.trim())}`))
     imageResults.value = res.data
     if (!res.data.length) imageError.value = 'No results found.'
   } catch (err) {
@@ -631,9 +632,9 @@ async function saveQuestion() {
   saving.value = true
   try {
     if (editingId.value) {
-      await axios.put(`/api/questions/${editingId.value}`, payload)
+      await axios.put(apiUrl(`/api/questions/${editingId.value}`), payload)
     } else {
-      await axios.post('/api/questions', payload)
+      await axios.post(apiUrl('/api/questions'), payload)
       page.value = 1
     }
     closeModal()
@@ -652,7 +653,7 @@ function confirmDelete(q) {
 async function deleteQuestion() {
   saving.value = true
   try {
-    await axios.delete(`/api/questions/${deleteTarget.value.id}`)
+    await axios.delete(apiUrl(`/api/questions/${deleteTarget.value.id}`))
     deleteTarget.value = null
     // If we just deleted the last item on this page, go back one page
     if (questions.value.length === 1 && page.value > 1) page.value--
