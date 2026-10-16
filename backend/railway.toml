@@ -1,0 +1,12 @@
+# Railway: create a service, set Root Directory to `backend`, then deploy.
+# Set env vars in the Railway dashboard (see backend/.env.example).
+# After deploy: CORS_ORIGIN=<your-vercel-url>, and Vercel VITE_SOCKET_URL=<this service URL>.
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"

@@ -144,4 +144,14 @@ export default {
     en: '🇬🇧 English',
     'pt-PT': '🇵🇹 Português',
   },
+
+  errors: {
+    serverMissingEnv:
+      'Este site não tem servidor de jogo configurado. Define VITE_SOCKET_URL na Vercel com o URL do backend alojado e volta a fazer deploy.',
+    serverUnreachable:
+      'Não foi possível contactar o servidor de jogo. Confirma que o backend está a correr e que VITE_SOCKET_URL está correcto.',
+    serverLan:
+      'Não foi possível ligar ao servidor de jogo. Inicia o backend na rede, ou define VITE_SOCKET_URL para um backend alojado.',
+  },
 }
+

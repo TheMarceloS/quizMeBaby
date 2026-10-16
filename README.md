@@ -313,14 +313,57 @@ Go to `/manage` to add, edit, and delete questions without touching the database
 
 ## Environment Variables
 
+### Backend (`backend/.env`)
+
 | Variable | Required | Description |
 |---|---|---|
 | `SUPABASE_URL` | Yes | Your Supabase project URL |
 | `SUPABASE_SERVICE_KEY` | Yes | Supabase service role key (keep secret) |
-| `CORS_ORIGIN` | Yes | Frontend URL (e.g. `http://localhost:5174`) |
-| `PORT` | No | Backend port (default: `3001`) |
+| `CORS_ORIGIN` | Yes | Frontend URL(s), comma-separated (e.g. `https://your-app.vercel.app`) |
+| `PORT` | No | Backend port (default: `3001`; cloud hosts inject this) |
 
-> **Never commit `.env` to version control.** The `.gitignore` already excludes it.
+### Frontend (Vite / Vercel)
+
+| Variable | Required in prod | Description |
+|---|---|---|
+| `VITE_SOCKET_URL` | Yes on Vercel | Public HTTPS origin of the hosted backend (Socket.io) |
+| `VITE_API_URL` | No | REST base; defaults to `VITE_SOCKET_URL` when unset |
+
+> **Never commit `.env` to version control.** The `.gitignore` already excludes it.  
+> Vite bakes `VITE_*` at **build** time — change them in Vercel, then **redeploy**.
+
+---
+
+## Deploying (Vercel + Render / Railway)
+
+The Vercel site is a **static SPA**. Live games need the Node/Socket.io server in `backend/` on a host that supports WebSockets. LAN/Wi‑Fi is **not** required once both are hosted.
+
+### 1. Deploy the backend (pick one)
+
+**Render (recommended free path)**  
+1. Connect this repo on [Render](https://render.com) → New → Blueprint (uses root [`render.yaml`](./render.yaml)), or New Web Service with **Root Directory** `backend`, build `npm install`, start `npm start`.  
+2. Set env vars from `backend/.env.example` (`SUPABASE_*`, `CORS_ORIGIN`, optional Spotify/YouTube).  
+3. `CORS_ORIGIN` = your Vercel URL (add preview URLs comma-separated if needed).  
+4. Note the service URL, e.g. `https://quizmebaby-api.onrender.com`. Hit `/health` — expect `{ "status": "ok" }`.  
+   Free-tier services may sleep; the first request can take ~30s.
+
+**Railway**  
+1. New project → deploy from GitHub → **Root Directory** `backend` (see [`backend/railway.toml`](./backend/railway.toml)).  
+2. Same env vars as above.  
+3. Use the generated public HTTPS URL as `VITE_SOCKET_URL`.
+
+### 2. Point the Vercel frontend at the backend
+
+In the Vercel project → **Settings → Environment Variables** (Production):
+
+```env
+VITE_SOCKET_URL=https://YOUR-BACKEND-HOST
+VITE_API_URL=https://YOUR-BACKEND-HOST
+```
+
+Redeploy the frontend. Create Room / Join should reach the hosted Socket.io server (no same-Wi‑Fi message for a missing cloud backend).
+
+Local/LAN play still works: run `backend` + `frontend` with the Vite proxy; leave `VITE_SOCKET_URL` unset in local `.env`.
 
 ---
 
@@ -330,4 +373,4 @@ See [TODO.md](./TODO.md) for the full backlog. Planned highlights:
 
 - YouTube integration for video round questions
 - CSV bulk import for questions
-- Production deployment (Vercel + Railway/Render)
+- Production hardening (auth, multi-instance sessions)
