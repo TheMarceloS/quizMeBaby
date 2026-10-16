@@ -8,7 +8,12 @@
         allow="autoplay; encrypted-media"
         allowfullscreen
       />
-      <img v-else-if="question.type === 'image' && question.media_url" :src="question.media_url" alt="Question image" />
+      <img
+        v-else-if="question.type === 'image' && question.media_url"
+        :src="question.media_url"
+        alt="Question image"
+        referrerpolicy="no-referrer"
+      />
     </div>
 
     <p class="question-text">{{ question.text }}</p>
