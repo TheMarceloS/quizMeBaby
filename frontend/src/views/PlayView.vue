@@ -98,7 +98,7 @@
 
         <h2 class="question-text">{{ displayedQuestion?.text }}</h2>
 
-        <!-- Multiple choice (music + image; any question with options) -->
+        <!-- Multiple choice (MC, music, image, video — any question with options) -->
         <div v-if="hasChoiceOptions(displayedQuestion)" class="options-grid">
           <button
             v-for="(opt, i) in displayedQuestion.options"
@@ -109,7 +109,7 @@
           >{{ opt }}</button>
         </div>
 
-        <!-- Text answer (video and free-text types) -->
+        <!-- Text answer (legacy / types without options) -->
         <div v-else class="text-answer">
           <input
             v-model="textAnswer"
