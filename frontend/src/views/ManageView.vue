@@ -187,8 +187,8 @@
               </div>
             </div>
 
-            <!-- Multiple choice options -->
-            <div v-if="form.type === 'multiple_choice' || form.type === 'music' || form.type === 'image'" class="field">
+            <!-- Multiple choice options (MC, music, image, video) -->
+            <div v-if="usesChoiceOptions(form.type)" class="field">
               <label>Options <span class="hint">(click the circle to mark correct)</span></label>
               <div class="options-editor">
                 <div v-for="(opt, i) in form.options" :key="i" class="option-row">
@@ -221,8 +221,8 @@
               </div>
             </div>
 
-            <!-- Correct answer (non-MC, non-music, non-image) -->
-            <div v-else-if="form.type !== 'music' && form.type !== 'image'" class="field">
+            <!-- Correct answer (types without option grids) -->
+            <div v-else class="field">
               <label>Correct Answer</label>
               <input v-model="form.correct_answer" type="text" placeholder="The answer players must match" required />
             </div>
@@ -407,6 +407,10 @@ const defaultForm = () => ({
 })
 
 const form = ref(defaultForm())
+
+function usesChoiceOptions(type) {
+  return type === 'multiple_choice' || type === 'music' || type === 'image' || type === 'video'
+}
 
 const mediaPlaceholder = computed(() => {
   if (form.value.type === 'music') return 'https://cdns-preview-….dzcdn.net/stream/...'
@@ -606,7 +610,7 @@ async function saveQuestion() {
   if (!f.text.trim()) return (formError.value = 'Question text is required.')
   if (!f.correct_answer.trim()) return (formError.value = 'Correct answer is required.')
 
-  if (f.type === 'multiple_choice' || f.type === 'music' || f.type === 'image') {
+  if (usesChoiceOptions(f.type)) {
     const filled = f.options.filter(o => o.trim())
     if (filled.length < 2) return (formError.value = 'At least 2 options required.')
     if (!filled.includes(f.correct_answer)) return (formError.value = 'Mark one option as the correct answer.')
@@ -617,7 +621,7 @@ async function saveQuestion() {
     type: f.type,
     category_id: f.category_id || null,
     correct_answer: f.correct_answer.trim(),
-    options: (f.type === 'multiple_choice' || f.type === 'music' || f.type === 'image') ? f.options.filter(o => o.trim()) : null,
+    options: usesChoiceOptions(f.type) ? f.options.filter(o => o.trim()) : null,
     media_url: f.media_url.trim() || null,
     points: f.points,
     time_limit: f.time_limit,

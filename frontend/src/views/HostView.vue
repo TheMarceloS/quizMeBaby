@@ -203,7 +203,7 @@
         <!-- Host answer area (only when playing as team) -->
         <div v-if="game.hostPlaysAsTeam" class="host-answer-area">
           <div v-if="!hostAnswer">
-            <div v-if="hostQuestion?.type === 'multiple_choice' || hostQuestion?.type === 'music'" class="host-options-grid">
+            <div v-if="hasChoiceOptions(hostQuestion)" class="host-options-grid">
               <button
                 v-for="(opt, i) in hostQuestion.options"
                 :key="opt"
@@ -456,6 +456,10 @@ function applyLang(question, lang) {
   if (!question || lang === 'en') return question
   const tr = question.translations?.[lang]
   return tr ? { ...question, text: tr.text, options: tr.options, correct_answer: tr.correct_answer } : question
+}
+
+function hasChoiceOptions(question) {
+  return Array.isArray(question?.options) && question.options.length > 0
 }
 
 const hostQuestion = computed(() => applyLang(game.currentQuestion, game.language))

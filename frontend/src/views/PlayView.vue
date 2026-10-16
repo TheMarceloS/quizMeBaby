@@ -79,10 +79,27 @@
 
       <!-- Answer area -->
       <div v-if="!game.myAnswer" class="answer-area">
+        <!-- Image / video media (music uses the host-driven audio bar above) -->
+        <div v-if="displayedQuestion?.type === 'image' && displayedQuestion.media_url" class="question-media">
+          <img
+            :src="displayedQuestion.media_url"
+            alt="Question image"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+        <div v-else-if="displayedQuestion?.type === 'video' && displayedQuestion.media_url" class="question-media">
+          <iframe
+            :src="displayedQuestion.media_url"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            title="Question video"
+          />
+        </div>
+
         <h2 class="question-text">{{ displayedQuestion?.text }}</h2>
 
-        <!-- Multiple choice (also used for music questions) -->
-        <div v-if="displayedQuestion?.type === 'multiple_choice' || displayedQuestion?.type === 'music'" class="options-grid">
+        <!-- Multiple choice (MC, music, image, video — any question with options) -->
+        <div v-if="hasChoiceOptions(displayedQuestion)" class="options-grid">
           <button
             v-for="(opt, i) in displayedQuestion.options"
             :key="opt"
@@ -92,7 +109,7 @@
           >{{ opt }}</button>
         </div>
 
-        <!-- Text answer -->
+        <!-- Text answer (legacy / types without options) -->
         <div v-else class="text-answer">
           <input
             v-model="textAnswer"
@@ -299,6 +316,10 @@ function applyLang(question, lang) {
   if (!question || lang === 'en') return question
   const tr = question.translations?.[lang]
   return tr ? { ...question, text: tr.text, options: tr.options } : question
+}
+
+function hasChoiceOptions(question) {
+  return Array.isArray(question?.options) && question.options.length > 0
 }
 
 const displayedQuestion = computed(() => applyLang(game.currentQuestion, displayedLang.value))
@@ -640,6 +661,27 @@ function readyForNextQuestion() {
   flex-direction: column;
   padding: 8px 20px 20px;
   overflow-y: auto;
+}
+
+.question-media {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.question-media img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  background: #000;
+}
+.question-media iframe {
+  display: block;
+  width: 100%;
+  height: 200px;
+  border: none;
 }
 
 .question-text {
